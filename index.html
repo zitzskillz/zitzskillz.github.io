@@ -92,28 +92,36 @@
       font-weight: bold;
     }
 
-    /* ⭐ SLIDESHOW — removed margin-top, parent gap handles spacing */
-    .slideshow {
+    /* ⭐ INFINITE SCROLL STRIP */
+    .carousel-wrap {
+      width: 100vw;
+      overflow: hidden;
       position: relative;
-      width: min(90vw, 320px);
-      height: min(90vw, 320px);
     }
 
-    .slide {
-      position: absolute;
-      width: 100%;
-      height: 100%;
+    .carousel-track {
+      display: flex;
+      gap: 14px;
+      width: max-content;
+      animation: scrollStrip 40s linear infinite;
+    }
+
+    .carousel-wrap:hover .carousel-track {
+      animation-play-state: paused;
+    }
+
+    .carousel-track img {
+      flex-shrink: 0;
+      width: min(60vw, 220px);
+      height: min(60vw, 220px);
       object-fit: cover;
-
-      border-radius: 25px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
     }
 
-    .slide.active {
-      opacity: 1;
+    @keyframes scrollStrip {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
     }
 
     /* ⭐ HEARTS */
@@ -210,23 +218,17 @@
 
     <div id="countdown"></div>
 
-    <div class="slideshow">
-      <img class="slide active" src="photo1.jpg">
-      <img class="slide" src="photo2.jpg">
-      <img class="slide" src="photo3.jpg">
-      <img class="slide" src="photo4.jpg">
-      <img class="slide" src="photo5.jpg">
-      <img class="slide" src="photo6.jpg">
-      <img class="slide" src="photo7.jpg">
-      <img class="slide" src="photo8.jpg">
-      <img class="slide" src="photo9.jpg">
-      <img class="slide" src="photo10.jpg">
-      <img class="slide" src="photo11.jpg">
-      <img class="slide" src="photo12.jpg">
-      <img class="slide" src="photo13.jpg">
-      <img class="slide" src="photo14.jpg">
-      <img class="slide" src="photo15.jpg">
-      <img class="slide" src="photo16.jpg">
+    <div class="carousel-wrap">
+      <div class="carousel-track" id="track">
+        <img src="photo1.jpg"><img src="photo2.jpg"><img src="photo3.jpg"><img src="photo4.jpg">
+        <img src="photo5.jpg"><img src="photo6.jpg"><img src="photo7.jpg"><img src="photo8.jpg">
+        <img src="photo9.jpg"><img src="photo10.jpg"><img src="photo11.jpg"><img src="photo12.jpg">
+        <img src="photo13.jpg"><img src="photo14.jpg"><img src="photo15.jpg"><img src="photo16.jpg">
+        <img src="photo1.jpg"><img src="photo2.jpg"><img src="photo3.jpg"><img src="photo4.jpg">
+        <img src="photo5.jpg"><img src="photo6.jpg"><img src="photo7.jpg"><img src="photo8.jpg">
+        <img src="photo9.jpg"><img src="photo10.jpg"><img src="photo11.jpg"><img src="photo12.jpg">
+        <img src="photo13.jpg"><img src="photo14.jpg"><img src="photo15.jpg"><img src="photo16.jpg">
+      </div>
     </div>
 
   </div>
@@ -259,17 +261,7 @@
     setInterval(updateCountdown, 60000);
   </script>
 
-  <!-- SLIDESHOW -->
-  <script>
-    const slides = document.querySelectorAll(".slide");
-    let index = 0;
 
-    setInterval(() => {
-      slides[index].classList.remove("active");
-      index = (index + 1) % slides.length;
-      slides[index].classList.add("active");
-    }, 3000);
-  </script>
 
 </body>
 </html>
