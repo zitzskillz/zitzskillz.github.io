@@ -2,117 +2,105 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Für Arnela ❤️</title>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    #countdown {
-  margin-top: 20px;
-  font-size: 22px;
-  color: #ff2e63;
-  font-weight: bold;
-}
-    
-    body {
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      overflow: hidden;
-      background: linear-gradient(to bottom right, #ffd6e7, #fff0f5);
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-    h1 {
-      font-size: 64px;
-      color: #ff2e63;
-      margin-bottom: 10px;
-      animation: fadeIn 2s ease;
+  body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    overflow: hidden;
+    background: linear-gradient(to bottom right, #ffd6e7, #fff0f5);
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 6vw, 64px);
+    color: #ff2e63;
+    margin-bottom: 10px;
+    animation: fadeIn 2s ease;
+  }
+
+  p {
+    font-size: clamp(14px, 4vw, 24px);
+    color: #444;
+    max-width: 700px;
+    padding: 0 10px;
+    animation: fadeIn 3s ease;
+    line-height: 1.5;
+  }
+
+  #countdown {
+    margin-top: 20px;
+    font-size: clamp(14px, 4vw, 22px);
+    color: #ff2e63;
+    font-weight: bold;
+  }
+
+  /* SLIDESHOW (mobile responsive) */
+  .slideshow {
+    position: relative;
+    width: min(90vw, 300px);
+    height: min(90vw, 300px);
+    margin-top: 30px;
+  }
+
+  .slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+  }
+
+  .slide.active {
+    opacity: 1;
+  }
+
+  /* HEARTS */
+  .heart {
+    position: absolute;
+    color: rgba(255, 0, 100, 0.6);
+    font-size: 20px;
+    animation: rise 10s linear infinite;
+  }
+
+  @keyframes rise {
+    from {
+      transform: translateY(100vh);
+      opacity: 1;
     }
-
-    p {
-      font-size: 24px;
-      color: #444;
-      max-width: 700px;
-      padding: 0 20px;
-      animation: fadeIn 3s ease;
+    to {
+      transform: translateY(-120vh);
+      opacity: 0;
     }
+  }
 
-    img {
-      width: 280px;
-      margin-top: 30px;
-      border-radius: 25px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      animation: float 4s ease-in-out infinite;
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
     }
-
-    .heart {
-      position: absolute;
-      color: rgba(255, 0, 100, 0.6);
-      font-size: 24px;
-      animation: rise 10s linear infinite;
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
-
-    @keyframes rise {
-      from {
-        transform: translateY(100vh) scale(1);
-        opacity: 1;
-      }
-      to {
-        transform: translateY(-120vh) scale(1.5);
-        opacity: 0;
-      }
-    }
-
-    @keyframes float {
-      0%, 100% {
-        transform: translateY(0px);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    .slideshow {
-  position: relative;
-  width: 300px;
-  height: 300px;
-  margin-top: 30px;
-}
-
-.slide {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 25px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  opacity: 0;
-  transition: opacity 1s ease-in-out;
-}
-
-.slide.active {
-  opacity: 1;
-}
-  </style>
+  }
+</style>
 </head>
 
 <body>
