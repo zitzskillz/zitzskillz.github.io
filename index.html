@@ -91,6 +91,27 @@
         transform: translateY(0);
       }
     }
+    .slideshow {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin-top: 30px;
+}
+
+.slide {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.slide.active {
+  opacity: 1;
+}
   </style>
 </head>
 
@@ -132,6 +153,34 @@
 
   updateCountdown();
   setInterval(updateCountdown, 60000);
+</script>
+  <div class="slideshow">
+  <img class="slide active" src="photo1.jpg">
+  <img class="slide" src="photo2.jpg">
+  <img class="slide" src="photo3.jpg">
+  <img class="slide" src="photo4.jpg">
+  <img class="slide" src="photo5.jpg">
+  <img class="slide" src="photo6.jpg">
+  <img class="slide" src="photo7.jpg">
+  <img class="slide" src="photo8.jpg">
+  <img class="slide" src="photo9.jpg">
+  <img class="slide" src="photo10.jpg">
+  <img class="slide" src="photo11.jpg">
+  <img class="slide" src="photo12.jpg">
+  <img class="slide" src="photo13.jpg">
+  <img class="slide" src="photo14.jpg">
+  <img class="slide" src="photo15.jpg">
+  <img class="slide" src="photo16.jpg">
+</div>
+  <script>
+  const slides = document.querySelectorAll(".slide");
+  let index = 0;
+
+  setInterval(() => {
+    slides[index].classList.remove("active");
+    index = (index + 1) % slides.length;
+    slides[index].classList.add("active");
+  }, 3000);
 </script>
 </body>
 </html>
