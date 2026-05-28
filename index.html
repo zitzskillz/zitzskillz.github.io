@@ -58,19 +58,22 @@
       to { transform: translate(-200px, -200px); }
     }
 
-    /* ⭐ MAIN CARD (FIXED CENTERING) */
+    /* ⭐ MAIN CARD (VISUAL FIX APPLIED) */
     .card {
       display: flex;
       flex-direction: column;
       align-items: center;
 
-      gap: 12px;
+      gap: 14px;
 
       width: 100%;
       max-width: 600px;
 
       position: relative;
       z-index: 2;
+
+      /* THIS fixes the “slightly off center” feeling */
+      transform: translateX(-2px);
     }
 
     h1 {
@@ -92,13 +95,12 @@
       font-weight: bold;
     }
 
-    /* ⭐ SLIDESHOW (NOW PROPERLY CENTERED) */
+    /* ⭐ SLIDESHOW */
     .slideshow {
       position: relative;
       width: min(90vw, 320px);
       height: min(90vw, 320px);
-
-      margin: -95;
+      margin-top: 14px;
     }
 
     .slide {
@@ -128,25 +130,13 @@
     }
 
     @keyframes rise {
-      from {
-        transform: translateY(100vh);
-        opacity: 1;
-      }
-      to {
-        transform: translateY(-120vh);
-        opacity: 0;
-      }
+      from { transform: translateY(100vh); opacity: 1; }
+      to { transform: translateY(-120vh); opacity: 0; }
     }
 
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -164,7 +154,6 @@
 
     <div id="countdown"></div>
 
-    <!-- SLIDESHOW -->
     <div class="slideshow">
       <img class="slide active" src="photo1.jpg">
       <img class="slide" src="photo2.jpg">
