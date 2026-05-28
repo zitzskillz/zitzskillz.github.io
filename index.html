@@ -17,20 +17,59 @@
       display: flex;
       justify-content: center;
       align-items: center;
+
       background: linear-gradient(to bottom right, #ffd6e7, #fff0f5);
       font-family: Arial, sans-serif;
       text-align: center;
       padding: 20px;
       overflow: hidden;
+      position: relative;
     }
 
-    /* MAIN CARD (this is the upgrade) */
+    /* ⭐ STAR BACKGROUND */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 200%;
+      background:
+        radial-gradient(2px 2px at 20px 30px, white, transparent),
+        radial-gradient(2px 2px at 80px 120px, white, transparent),
+        radial-gradient(1px 1px at 200px 80px, white, transparent),
+        radial-gradient(1px 1px at 300px 200px, white, transparent),
+        radial-gradient(2px 2px at 400px 50px, white, transparent),
+        radial-gradient(1px 1px at 500px 150px, white, transparent),
+        radial-gradient(2px 2px at 600px 250px, white, transparent),
+        radial-gradient(1px 1px at 700px 100px, white, transparent);
+
+      background-repeat: repeat;
+      background-size: 800px 800px;
+      opacity: 0.4;
+      animation: starsMove 60s linear infinite;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    @keyframes starsMove {
+      from { transform: translate(0, 0); }
+      to { transform: translate(-200px, -200px); }
+    }
+
+    /* ⭐ MAIN CARD (FIXED ALIGNMENT) */
     .card {
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
+
       gap: 12px;
+      width: 100%;
       max-width: 600px;
+
+      position: relative;
+      z-index: 2;
     }
 
     h1 {
@@ -50,10 +89,9 @@
       font-size: clamp(14px, 4vw, 20px);
       color: #ff2e63;
       font-weight: bold;
-      margin-top: 5px;
     }
 
-    /* SLIDESHOW */
+    /* ⭐ SLIDESHOW (CENTERED PERFECTLY) */
     .slideshow {
       position: relative;
       width: min(90vw, 320px);
@@ -76,12 +114,13 @@
       opacity: 1;
     }
 
-    /* HEARTS */
+    /* ⭐ HEARTS */
     .heart {
       position: absolute;
       color: rgba(255, 0, 100, 0.6);
       font-size: 18px;
       animation: rise 10s linear infinite;
+      z-index: 1;
     }
 
     @keyframes rise {
