@@ -149,6 +149,8 @@
       flex-direction: column;
       align-items: center;
       animation: float 3s ease-in-out infinite, fadeIn 1s ease;
+      cursor: pointer;
+      user-select: none;
     }
 
     .speech-bubble {
@@ -197,6 +199,22 @@
       0%, 100% { transform: translateY(0px); }
       50% { transform: translateY(-8px); }
     }
+
+    .teddy-wrap.playing {
+      animation: dance 0.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes dance {
+      0%   { transform: translateY(0px) rotate(-6deg) scale(1.05); }
+      100% { transform: translateY(-6px) rotate(6deg) scale(1.1); }
+    }
+
+    .music-hint {
+      font-size: 11px;
+      color: rgba(255, 46, 99, 0.6);
+      margin-top: 4px;
+      letter-spacing: 0.03em;
+    }
   </style>
 </head>
 
@@ -204,10 +222,15 @@
 
   <div class="card">
 
-    <div class="teddy-wrap">
-      <div class="speech-bubble">Ich liebe dich maco 🥰</div>
+    <div class="teddy-wrap" id="teddyWrap" onclick="toggleMusic()">
+      <div class="speech-bubble" id="bubble">Ich liebe dich maco 🥰</div>
       <div class="teddy">🧸</div>
+      <div class="music-hint" id="musicHint">▶ tap me for a surprise</div>
     </div>
+
+    <audio id="bgMusic" loop>
+      <source src="music.mp3" type="audio/mpeg">
+    </audio>
 
     <h1>Volim te bebo zauvijek ❤️</h1>
 
@@ -262,6 +285,34 @@
   </script>
 
 
+  <!-- MUSIC -->
+  <script>
+    const music = document.getElementById("bgMusic");
+    const wrap  = document.getElementById("teddyWrap");
+    const hint  = document.getElementById("musicHint");
+    const bubble = document.getElementById("bubble");
+    music.volume = 0.25;
+    let playing = false;
+
+    function toggleMusic() {
+      if (!playing) {
+        music.play().then(() => {
+          playing = true;
+          wrap.classList.add("playing");
+          hint.textContent = "⏸ tap to pause";
+          bubble.textContent = "🎵 Time To Dance 🎵";
+        }).catch(() => {
+          hint.textContent = "⚠️ add music.mp3 next to this file";
+        });
+      } else {
+        music.pause();
+        playing = false;
+        wrap.classList.remove("playing");
+        hint.textContent = "▶ tap me for a surprise";
+        bubble.textContent = "Ich liebe dich maco 🥰";
+      }
+    }
+  </script>
 
 </body>
 </html>
