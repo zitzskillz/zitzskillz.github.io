@@ -58,7 +58,7 @@
       to { transform: translate(-200px, -200px); }
     }
 
-    /* ⭐ MAIN CARD (VISUAL FIX APPLIED) */
+    /* ⭐ MAIN CARD — removed transform: translateX(-2px) hack */
     .card {
       display: flex;
       flex-direction: column;
@@ -71,9 +71,6 @@
 
       position: relative;
       z-index: 2;
-
-      /* THIS fixes the “slightly off center” feeling */
-      transform: translateX(-2px);
     }
 
     h1 {
@@ -95,12 +92,11 @@
       font-weight: bold;
     }
 
-    /* ⭐ SLIDESHOW */
+    /* ⭐ SLIDESHOW — removed margin-top, parent gap handles spacing */
     .slideshow {
       position: relative;
       width: min(90vw, 320px);
       height: min(90vw, 320px);
-      margin-top: 14px;
     }
 
     .slide {
