@@ -2,173 +2,186 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Für Arnela ❤️</title>
 
-<style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  body {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    overflow: hidden;
-    background: linear-gradient(to bottom right, #ffd6e7, #fff0f5);
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 20px;
-  }
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(to bottom right, #ffd6e7, #fff0f5);
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      overflow: hidden;
+    }
 
-  h1 {
-    font-size: clamp(28px, 6vw, 64px);
-    color: #ff2e63;
-    margin-bottom: 10px;
-    animation: fadeIn 2s ease;
-  }
+    /* MAIN CARD (this is the upgrade) */
+    .card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      max-width: 600px;
+    }
 
-  p {
-    font-size: clamp(14px, 4vw, 24px);
-    color: #444;
-    max-width: 700px;
-    padding: 0 10px;
-    animation: fadeIn 3s ease;
-    line-height: 1.5;
-  }
+    h1 {
+      font-size: clamp(28px, 6vw, 64px);
+      color: #ff2e63;
+      animation: fadeIn 2s ease;
+    }
 
-  #countdown {
-    margin-top: 20px;
-    font-size: clamp(14px, 4vw, 22px);
-    color: #ff2e63;
-    font-weight: bold;
-  }
+    p {
+      font-size: clamp(14px, 4vw, 20px);
+      color: #444;
+      line-height: 1.5;
+      animation: fadeIn 3s ease;
+    }
 
-  /* SLIDESHOW (mobile responsive) */
-  .slideshow {
-    position: relative;
-    width: min(90vw, 300px);
-    height: min(90vw, 300px);
-    margin-top: 30px;
-  }
+    #countdown {
+      font-size: clamp(14px, 4vw, 20px);
+      color: #ff2e63;
+      font-weight: bold;
+      margin-top: 5px;
+    }
 
-  .slide {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-  }
+    /* SLIDESHOW */
+    .slideshow {
+      position: relative;
+      width: min(90vw, 320px);
+      height: min(90vw, 320px);
+      margin-top: 10px;
+    }
 
-  .slide.active {
-    opacity: 1;
-  }
+    .slide {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
 
-  /* HEARTS */
-  .heart {
-    position: absolute;
-    color: rgba(255, 0, 100, 0.6);
-    font-size: 20px;
-    animation: rise 10s linear infinite;
-  }
-
-  @keyframes rise {
-    from {
-      transform: translateY(100vh);
+    .slide.active {
       opacity: 1;
     }
-    to {
-      transform: translateY(-120vh);
-      opacity: 0;
-    }
-  }
 
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
+    /* HEARTS */
+    .heart {
+      position: absolute;
+      color: rgba(255, 0, 100, 0.6);
+      font-size: 18px;
+      animation: rise 10s linear infinite;
     }
-    to {
-      opacity: 1;
-      transform: translateY(0);
+
+    @keyframes rise {
+      from {
+        transform: translateY(100vh);
+        opacity: 1;
+      }
+      to {
+        transform: translateY(-120vh);
+        opacity: 0;
+      }
     }
-  }
-</style>
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-  <h1>Volim te bebo zauvijek ❤️</h1>
+  <div class="card">
 
-  <p>
-   Svaki trenutak s tobom je poseban maco.<br>
-  Diese seite ist ein kleine erinnerung koliko mi značiš, na moj fazon haha.
-  </p>
-<div id="countdown"></div>
-  
-  <alt="Mein baby maus">
+    <h1>Volim te bebo zauvijek ❤️</h1>
 
-  <!-- Floating Hearts -->
+    <p>
+      Svaki trenutak s tobom je poseban maco.<br>
+      Diese Seite ist eine kleine Erinnerung koliko mi značiš, na moj fazon haha.
+    </p>
+
+    <div id="countdown"></div>
+
+    <!-- SLIDESHOW -->
+    <div class="slideshow">
+      <img class="slide active" src="photo1.jpg">
+      <img class="slide" src="photo2.jpg">
+      <img class="slide" src="photo3.jpg">
+      <img class="slide" src="photo4.jpg">
+      <img class="slide" src="photo5.jpg">
+      <img class="slide" src="photo6.jpg">
+      <img class="slide" src="photo7.jpg">
+      <img class="slide" src="photo8.jpg">
+      <img class="slide" src="photo9.jpg">
+      <img class="slide" src="photo10.jpg">
+      <img class="slide" src="photo11.jpg">
+      <img class="slide" src="photo12.jpg">
+      <img class="slide" src="photo13.jpg">
+      <img class="slide" src="photo14.jpg">
+      <img class="slide" src="photo15.jpg">
+      <img class="slide" src="photo16.jpg">
+    </div>
+
+  </div>
+
+  <!-- HEARTS -->
   <div class="heart" style="left:10%; animation-delay:0s;">❤️</div>
   <div class="heart" style="left:20%; animation-delay:2s;">💖</div>
   <div class="heart" style="left:35%; animation-delay:4s;">❤️</div>
   <div class="heart" style="left:50%; animation-delay:1s;">💕</div>
   <div class="heart" style="left:65%; animation-delay:5s;">❤️</div>
   <div class="heart" style="left:80%; animation-delay:3s;">💗</div>
-<script>
-  // Put the date you met here
-  const startDate = new Date("2025-11-01");
 
-  function updateCountdown() {
-    const now = new Date();
-
-    const diff = now - startDate;
-
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((diff / (1000 * 60)) % 60);
-
-    document.getElementById("countdown").innerHTML =
-      `Zajedno smo već ${days} dana, ${hours} sati i ${minutes} minuta ❤️`;
-  }
-
-  updateCountdown();
-  setInterval(updateCountdown, 60000);
-</script>
-  <div class="slideshow">
-  <img class="slide active" src="photo1.jpg">
-  <img class="slide" src="photo2.jpg">
-  <img class="slide" src="photo3.jpg">
-  <img class="slide" src="photo4.jpg">
-  <img class="slide" src="photo5.jpg">
-  <img class="slide" src="photo6.jpg">
-  <img class="slide" src="photo7.jpg">
-  <img class="slide" src="photo8.jpg">
-  <img class="slide" src="photo9.jpg">
-  <img class="slide" src="photo10.jpg">
-  <img class="slide" src="photo11.jpg">
-  <img class="slide" src="photo12.jpg">
-  <img class="slide" src="photo13.jpg">
-  <img class="slide" src="photo14.jpg">
-  <img class="slide" src="photo15.jpg">
-  <img class="slide" src="photo16.jpg">
-</div>
+  <!-- COUNTDOWN -->
   <script>
-  const slides = document.querySelectorAll(".slide");
-  let index = 0;
+    const startDate = new Date("2025-11-01");
 
-  setInterval(() => {
-    slides[index].classList.remove("active");
-    index = (index + 1) % slides.length;
-    slides[index].classList.add("active");
-  }, 3000);
-</script>
+    function updateCountdown() {
+      const now = new Date();
+      const diff = now - startDate;
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+
+      document.getElementById("countdown").innerHTML =
+        `Zajedno smo već ${days} dana, ${hours} sati i ${minutes} minuta ❤️`;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 60000);
+  </script>
+
+  <!-- SLIDESHOW -->
+  <script>
+    const slides = document.querySelectorAll(".slide");
+    let index = 0;
+
+    setInterval(() => {
+      slides[index].classList.remove("active");
+      index = (index + 1) % slides.length;
+      slides[index].classList.add("active");
+    }, 3000);
+  </script>
+
 </body>
 </html>
