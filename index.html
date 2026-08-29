@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>ein kleines Programm für dich</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+  /* ======================================================
+     EDIT ME: put her name here and it shows up everywhere
+     ====================================================== */
+  :root{
+    --pink: #ff6fa5;
+    --pink-deep: #e6398a;
+    --pink-pale: #ffe3ef;
+    --red: #ff2d3e;
+    --red-deep: #8f0e1b;
+    --red-soft: #ff8f9a;
+    --white: #ffffff;
+    --ink: #ffe3ea;
+    --ink-dark: #3a0009;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{
+    margin:0; padding:0; width:100%; min-height:100%;
+    background:#000;
+    font-family: 'Press Start 2P', monospace;
+    color:var(--ink);
+    overflow-x:hidden;
+    image-rendering: pixelated;
+  }
+  ::selection{ background:var(--red); color:#000; }
+
+  #matrixCanvas{
+    position:fixed; inset:0; width:100%; height:100%; display:block;
+    pointer-events:none;
+    filter: blur(1.5px);
+    opacity:.85;
+  }
+
+  .bg-glow{
+    position:fixed; border-radius:50%; pointer-events:none;
+    filter: blur(90px);
+  }
+  .bg-glow-1{ width:440px; height:440px; background:var(--red); top:-140px; left:-120px; opacity:.35; }
+  .bg-glow-2{ width:380px; height:380px; background:var(--pink); bottom:-120px; right:-100px; opacity:.28; }
+  .bg-glow-3{ width:320px; height:320px; background:var(--red-deep); top:38%; left:50%; transform:translateX(-50%); opacity:.22; }
+
+  button{ font-family:'Press Start 2P', monospace; cursor:pointer; }
+
+  /* ================= INTRO / HACK SCREEN ================= */
+  #intro{
+    position:fixed; inset:0;
+    background: transparent;
+    z-index:100;
+    display:flex; align-items:center; justify-content:center;
+    transition: opacity 1.1s ease;
+  }
+  #intro.fade-out{ opacity:0; pointer-events:none; }
+
+  #introOverlay{
+    position:relative; z-index:2; text-align:center;
+    opacity:0; transition:opacity 1.4s ease;
+  }
+  #introOverlay.show{ opacity:1; }
+  #introTitle{
+    font-size: clamp(18px, 5vw, 42px);
+    color: var(--red);
+    letter-spacing:4px;
+    text-shadow: 0 0 6px var(--red), 0 0 18px var(--red), 0 0 2px #fff;
+    animation: flicker 2.6s infinite;
+  }
+  #introSub{
+    margin-top:22px; font-size:10px; color:#ff8f9a; letter-spacing:2px;
+    opacity:.85;
+  }
+  #enterBtn{
+    margin-top:34px; padding:14px 22px; background:transparent;
+    border:3px solid var(--red); color:var(--red); font-size:11px;
+    letter-spacing:2px; animation: pulseGlow 1.6s infinite;
+  }
+  #enterBtn:hover{ background:var(--red); color:#000; }
+
+  @keyframes flicker{
+    0%,19%,21%,23%,25%,54%,56%,100%{ opacity:1; }
+    20%,24%,55%{ opacity:.55; }
+  }
+  @keyframes pulseGlow{
+    0%,100%{ box-shadow:0 0 4px var(--red); }
+    50%{ box-shadow:0 0 18px var(--red); }
+  }
+
+  /* ================= MAIN PAGE ================= */
+  #main{
+    position:relative; min-height:100vh; width:100%;
+    background: transparent;
+    display:none;
+    overflow:hidden;
+  }
+  #main.visible{ display:block; }
+
+  .floating-heart{
+    position:absolute; z-index:1; pointer-events:none;
+    animation: floatUp linear infinite;
+    opacity:.85;
+  }
+  @keyframes floatUp{
+    0%{ transform:translateY(0) rotate(0deg); }
+    100%{ transform:translateY(-120vh) rotate(20deg); }
+  }
+
+  .corner-lily{ position:absolute; z-index:1; pointer-events:none; }
+  .corner-lily.tl{ top:10px; left:10px; }
+  .corner-lily.tr{ top:10px; right:10px; transform:scaleX(-1); }
+  .corner-lily.bl{ bottom:10px; left:10px; }
+  .corner-lily.br{ bottom:10px; right:10px; transform:scaleX(-1); }
+
+  .content{
+    position:relative; z-index:2;
+    min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding: 60px 18px 100px;
+    text-align:center;
+  }
+
+  .lily-row{
+    display:flex; gap:18px; justify-content:center; align-items:flex-end; margin-bottom:18px;
+  }
+
+  .lily-svg{
+    display:block;
+    filter: drop-shadow(0 6px 10px rgba(0,0,0,.55)) drop-shadow(0 0 16px rgba(255,45,62,.45));
+  }
+
+  #greeting{
+    font-size: clamp(14px,4vw,22px);
+    color: var(--red);
+    text-shadow: 2px 2px 0 var(--red-deep), 0 0 16px rgba(255,45,62,.4);
+    margin-bottom: 26px;
+  }
+
+  /* ================= LETTER / ENVELOPE ================= */
+  #envelopeArea{
+    display:flex; flex-direction:column; align-items:center; gap:16px;
+    cursor:pointer; margin: 10px auto 0; user-select:none;
+    transition: opacity .35s ease, transform .35s ease;
+  }
+  #envelopeArea.opening{ opacity:0; transform:scale(1.2); }
+  #envelopeIcon{ animation: envBounce 1.7s ease-in-out infinite; }
+  @keyframes envBounce{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(-8px); }
+  }
+  #envelopeHint{
+    font-size: 9px; color: var(--red-soft); opacity:.8; line-height:2;
+  }
+
+  #dialogBox{
+    display:none;
+    width:100%; max-width: 560px;
+    margin: 10px auto 0;
+    background: #fffaf9;
+    border: 4px solid var(--red);
+    box-shadow: 6px 6px 0 var(--red-deep), 0 12px 34px rgba(255,45,62,.4);
+    padding: 22px 26px 28px;
+    text-align:left;
+    position:relative;
+    cursor:pointer;
+  }
+  #dialogBox.show{ display:block; animation: popIn .4s ease; }
+  #dialogText{
+    font-size: clamp(9px, 2.4vw, 12px);
+    line-height: 2.3;
+    color: var(--ink-dark);
+    min-height: 4.6em;
+  }
+  #dialogArrow{
+    position:absolute; right:20px; bottom:14px;
+    width:0; height:0;
+    border-left:7px solid transparent; border-right:7px solid transparent;
+    border-top:10px solid var(--red);
+    opacity:0; animation: bounceArrow .9s infinite;
+  }
+  #dialogArrow.show{ opacity:1; }
+  @keyframes bounceArrow{
+    0%,100%{ transform:translateY(0); }
+    50%{ transform:translateY(4px); }
+  }
+  #dialogHint{
+    text-align:center; font-size:8px; color:var(--red-soft); opacity:.7; margin-top:10px;
+  }
+
+  #question{
+    margin-top:46px; font-size: clamp(14px, 4.4vw, 26px);
+    color: var(--red);
+    text-shadow: 3px 3px 0 var(--red-deep), 0 0 18px rgba(255,45,62,.4);
+    display:none;
+  }
+  #question.show{ display:block; animation: popIn .6s ease; }
+  @keyframes popIn{
+    0%{ transform:scale(.4); opacity:0; }
+    80%{ transform:scale(1.08); opacity:1; }
+    100%{ transform:scale(1); }
+  }
+
+  #btnArea{
+    position:relative; margin-top:42px; width:100%; max-width:520px; min-height:140px;
+    display:none; flex-wrap:wrap; align-items:center; justify-content:center; gap:24px;
+  }
+  #btnArea.show{ display:flex; }
+
+  #yesBtn{
+    background: var(--red); border:4px solid var(--red-deep); color:#fff;
+    padding:16px 26px; font-size:12px; letter-spacing:1px;
+    box-shadow: 4px 4px 0 var(--red-deep), 0 0 22px rgba(255,45,62,.55);
+    transition: transform .15s ease;
+    animation: growYes 1s ease infinite alternate;
+  }
+  #yesBtn:active{ transform:translateY(3px); box-shadow:1px 1px 0 var(--red-deep); }
+  @keyframes growYes{ from{ filter:brightness(1);} to{ filter:brightness(1.12); } }
+
+  #noBtn{
+    background: transparent; border:3px solid var(--red); color:var(--red);
+    padding:16px 22px; font-size:12px; letter-spacing:1px;
+    transition: left .18s ease, top .18s ease, background .3s ease, color .3s ease, border-color .3s ease;
+  }
+  #noBtn.dodging{ position:absolute; }
+  #noBtn.surrendered{
+    background: var(--red); border:4px solid var(--red-deep); color:#fff;
+    box-shadow: 4px 4px 0 var(--red-deep);
+    animation: growYes 1s ease infinite alternate;
+  }
+
+  /* ================= CELEBRATION ================= */
+  #celebration{
+    position:fixed; inset:0; z-index:50; background:#000;
+    display:none; align-items:center; justify-content:center; flex-direction:column;
+    text-align:center; overflow:hidden;
+  }
+  #celebration.show{ display:flex; }
+  #celebration h1{
+    font-size: clamp(16px, 5vw, 30px); color:var(--red);
+    text-shadow: 3px 3px 0 var(--red-deep), 0 0 14px var(--red);
+    animation: flicker 2s infinite;
+    z-index:3;
+  }
+  #celebration p{
+    font-size: clamp(9px, 2.6vw, 13px); color:var(--red-soft); margin-top:18px; z-index:3;
+  }
+  .confetti-heart{
+    position:absolute; top:-30px; z-index:2; pointer-events:none;
+    animation: fall linear forwards;
+  }
+  @keyframes fall{
+    to{ transform: translateY(110vh) rotate(360deg); }
+  }
+
+  .pixel-grid{ display:grid; }
+  .pixel-grid div{ width:100%; height:100%; }
+
+  footer.credit{
+    position:relative; z-index:2; font-size:8px; color:var(--red-soft); opacity:.5; padding-bottom:14px; text-align:center;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="matrixCanvas"></canvas>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+<div class="bg-glow bg-glow-3"></div>
+
+<!-- ============ INTRO: HACK / MATRIX SCREEN ============ -->
+<div id="intro">
+  <div id="introOverlay">
+    <div id="introTitle">ETHERNAL LIEBE</div>
+    <div id="introSub">// entschlüssle eine Nachricht für dich...</div>
+    <button id="enterBtn">[ KLICKEN ZUM FORTFAHREN ]</button>
+  </div>
+</div>
+
+<!-- ============ MAIN PIXEL LOVE PAGE ============ -->
+<div id="main">
+  <div id="heartsLayer"></div>
+
+  <div class="corner-lily tl" data-lily></div>
+  <div class="corner-lily tr" data-lily></div>
+  <div class="corner-lily bl" data-lily></div>
+  <div class="corner-lily br" data-lily></div>
+
+  <div class="content">
+    <div class="lily-row" id="lilyRow"></div>
+
+    <!-- EDIT HER NAME BELOW -->
+    <div id="greeting">Hey Bebo,</div>
+
+    <div id="envelopeArea">
+      <div id="envelopeIcon"></div>
+      <div id="envelopeHint">ein Brief für dich...<br>(zum Öffnen antippen)</div>
+    </div>
+
+    <div id="dialogBox">
+      <div id="dialogText"></div>
+      <div id="dialogArrow"></div>
+    </div>
+    <div id="dialogHint" style="display:none;">(zum Fortfahren antippen)</div>
+
+    <div id="question">Willst du meine Freundin sein?</div>
+
+    <div id="btnArea">
+      <button id="yesBtn">JA</button>
+      <button id="noBtn">nein</button>
+    </div>
+  </div>
+
+  <footer class="credit">gemacht mit Pixeln &amp; Liebe</footer>
+</div>
+
+<!-- ============ CELEBRATION SCREEN ============ -->
+<div id="celebration">
+  <div id="celebrationLilies" class="lily-row"></div>
+  <h1>DU HAST JA GESAGT!</h1>
+  <p>ich liebe dich. jetzt und für immer. &lt;3</p>
+</div>
+
+<script>
+(function(){
+
+  /* ---------------------------------------------------
+     1. MATRIX / HACK-SCREEN RAIN ("I LOVE YOU" + hearts)
+  --------------------------------------------------- */
+  var canvas = document.getElementById('matrixCanvas');
+  var ctx = canvas.getContext('2d');
+  var W, H, cols, drops;
+  var fontSize = 16;
+  var chars = "01♥ICHLIEBEDICH♥アイラブユー".split("");
+
+  function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    cols = Math.floor(W / fontSize);
+    drops = new Array(cols).fill(0).map(function(){ return Math.random() * -50; });
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0,0,W,H);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function drawMatrix(){
+    ctx.fillStyle = 'rgba(0,0,0,0.08)';
+    ctx.fillRect(0,0,W,H);
+    ctx.font = fontSize + 'px monospace';
+
+    for (var i=0; i<cols; i++){
+      var text = chars[Math.floor(Math.random()*chars.length)];
+      var x = i*fontSize;
+      var y = drops[i]*fontSize;
+
+      // occasional bright leading pixel, rest a dimmer trailing red
+      ctx.fillStyle = Math.random() > 0.94 ? '#ffffff' : '#ff1a3a';
+      ctx.fillText(text, x, y);
+
+      if (y > H && Math.random() > 0.975){
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+  }
+  var matrixTimer = setInterval(drawMatrix, 45);
+
+  setTimeout(function(){
+    document.getElementById('introOverlay').classList.add('show');
+  }, 1400);
+
+  document.getElementById('enterBtn').addEventListener('click', function(){
+    var intro = document.getElementById('intro');
+    intro.classList.add('fade-out');
+    setTimeout(function(){
+      intro.style.display = 'none';
+      startMainPage();
+    }, 1100);
+  });
+
+  /* ---------------------------------------------------
+     2. PIXEL ART ENGINE (grid of divs from ASCII pattern)
+  --------------------------------------------------- */
+  function pixelArt(pattern, palette, px){
+    px = px || 6;
+    var rows = pattern.length;
+    var cols = pattern[0].length;
+    var grid = document.createElement('div');
+    grid.className = 'pixel-grid';
+    grid.style.gridTemplateColumns = 'repeat(' + cols + ', ' + px + 'px)';
+    grid.style.gridTemplateRows = 'repeat(' + rows + ', ' + px + 'px)';
+    grid.style.width = (cols*px) + 'px';
+    grid.style.height = (rows*px) + 'px';
+
+    for (var r=0; r<rows; r++){
+      for (var c=0; c<cols; c++){
+        var ch = pattern[r][c];
+        var cell = document.createElement('div');
+        cell.style.background = ch === '.' ? 'transparent' : (palette[ch] || 'transparent');
+        grid.appendChild(cell);
+      }
+    }
+    return grid;
+  }
+
+  // classic 8-bit heart, 7x7
+  var HEART_PATTERN = [
+    ".##.##.",
+    "#**#**#",
+    "#*****#",
+    "#*****#",
+    ".#***#.",
+    "..#*#..",
+    "...#..."
+  ];
+  var HEART_PALETTE = { '#':'#c9184a', '*':'#ff4d6d' };
+
+  // sealed envelope with a heart wax seal, 13x9
+  var ENVELOPE_PATTERN = [
+    "BBBBBBBBBBBBB",
+    "BSWWWWWWWWWSB",
+    "BWSWWWWWWWSWB",
+    "BWWSWWWWWSWWB",
+    "BWWWSWWWSWWWB",
+    "BWWWWSSSWWWWB",
+    "BWWWWWHWWWWWB",
+    "BWWWWWWWWWWWB",
+    "BBBBBBBBBBBBB"
+  ];
+  var ENVELOPE_PALETTE = { 'B':'#ff2d3e', 'W':'#ffffff', 'S':'#ffb3b8', 'H':'#8f0e1b' };
+
+  function makeHeart(px){ return pixelArt(HEART_PATTERN, HEART_PALETTE, px||6); }
+  function makeEnvelope(px){ return pixelArt(ENVELOPE_PATTERN, ENVELOPE_PALETTE, px||10); }
+
+  // nice cartoon-style white lily blossom with a soft red/gold center and a green stem
+  var LILY_SVG =
+    '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">' +
+      '<path d="M50,60 L50,97" stroke="#5fb865" stroke-width="4" stroke-linecap="round" fill="none"/>' +
+      '<path d="M50,80 C40,78 34,84 31,93" stroke="#5fb865" stroke-width="4" stroke-linecap="round" fill="none"/>' +
+      '<path d="M50,85 C60,83 66,89 69,96" stroke="#5fb865" stroke-width="4" stroke-linecap="round" fill="none"/>' +
+      '<path transform="rotate(0 50 58)" d="M50,58 C34,50 30,18 50,4 C70,18 66,50 50,58 Z" fill="#ffffff" stroke="#ff2d3e" stroke-width="2.5"/>' +
+      '<path transform="rotate(60 50 58)" d="M50,58 C34,50 30,18 50,4 C70,18 66,50 50,58 Z" fill="#ffffff" stroke="#ff2d3e" stroke-width="2.5"/>' +
+      '<path transform="rotate(120 50 58)" d="M50,58 C34,50 30,18 50,4 C70,18 66,50 50,58 Z" fill="#ffffff" stroke="#ff2d3e" stroke-width="2.5"/>' +
+      '<path transform="rotate(180 50 58)" d="M50,58 C34,50 30,18 50,4 C70,18 66,50 50,58 Z" fill="#ffffff" stroke="#ff2d3e" stroke-width="2.5"/>' +
+      '<path transform="rotate(240 50 58)" d="M50,58 C34,50 30,18 50,4 C70,18 66,50 50,58 Z" fill="#ffffff" stroke="#ff2d3e" stroke-width="2.5"/>' +
+      '<path transform="rotate(300 50 58)" d="M50,58 C34,50 30,18 50,4 C70,18 66,50 50,58 Z" fill="#ffffff" stroke="#ff2d3e" stroke-width="2.5"/>' +
+      '<circle cx="50" cy="58" r="7" fill="#ff2d3e"/>' +
+      '<circle cx="50" cy="58" r="3" fill="#ffd23f"/>' +
+    '</svg>';
+
+  function makeLily(size){
+    size = size || 44;
+    var wrap = document.createElement('div');
+    wrap.className = 'lily-svg';
+    wrap.style.width = size + 'px';
+    wrap.style.height = size + 'px';
+    wrap.innerHTML = LILY_SVG;
+    return wrap;
+  }
+
+  /* ---------------------------------------------------
+     3. MAIN PAGE SETUP
+  --------------------------------------------------- */
+  function startMainPage(){
+    var main = document.getElementById('main');
+    main.classList.add('visible');
+
+    // corner lilies
+    document.querySelectorAll('[data-lily]').forEach(function(el){
+      el.appendChild(makeLily(50));
+    });
+
+    // lily row above greeting
+    var lilyRow = document.getElementById('lilyRow');
+    for (var i=0;i<3;i++){ lilyRow.appendChild(makeLily(46)); }
+
+    // floating background hearts
+    var heartsLayer = document.getElementById('heartsLayer');
+    for (var h=0; h<14; h++){
+      var wrap = document.createElement('div');
+      wrap.className = 'floating-heart';
+      wrap.style.left = (Math.random()*100) + 'vw';
+      wrap.style.bottom = '-40px';
+      wrap.style.animationDuration = (8 + Math.random()*10) + 's';
+      wrap.style.animationDelay = (Math.random()*10) + 's';
+      wrap.appendChild(makeHeart(4));
+      heartsLayer.appendChild(wrap);
+    }
+
+    document.getElementById('envelopeIcon').appendChild(makeEnvelope(9));
+    document.getElementById('envelopeArea').addEventListener('click', openLetter);
+  }
+
+  /* ---------------------------------------------------
+     4. THE LETTER -> RPG-STYLE DIALOGUE BOX -> QUESTION
+  --------------------------------------------------- */
+  var LINES = [
+    "ich hab dir ein kleines Programm geschrieben.",
+    "jz siehst du halt so bisschen meine geek seite hahaha...",
+    "ja aufjedenfall was ich sagen wollte,",
+    "11.08.2026 unser erste Treffen, da wusste ich schon",
+    "du bist etwas besonderes bebo, etwas was sich lohnt,",
+    "eine Person die mir echte Frieden bringt, die mich schaetzt",
+    "eine Person die ich lieben will und ihr das geben will was sie braucht",
+    "Du machst alles so wunderschoen, bist mein kleine Engel, ich werde dich nie loslassen",
+    "Und wollte dich halt fragen..."
+  ];
+
+  var dialogText = document.getElementById('dialogText');
+  var dialogArrow = document.getElementById('dialogArrow');
+  var dialogBox = document.getElementById('dialogBox');
+  var dLineIndex = 0;
+  var dCharIndex = 0;
+  var dTyping = false;
+  var dTimer = null;
+
+  function openLetter(){
+    var envArea = document.getElementById('envelopeArea');
+    envArea.classList.add('opening');
+    setTimeout(function(){
+      envArea.style.display = 'none';
+      dialogBox.classList.add('show');
+      document.getElementById('dialogHint').style.display = 'block';
+      dLineIndex = 0;
+      typeDialogueLine();
+    }, 350);
+  }
+
+  function typeDialogueLine(){
+    if (dLineIndex >= LINES.length){
+      dialogBox.classList.remove('show');
+      document.getElementById('dialogHint').style.display = 'none';
+      showQuestion();
+      return;
+    }
+    var text = LINES[dLineIndex];
+    dCharIndex = 0;
+    dTyping = true;
+    dialogArrow.classList.remove('show');
+    dialogText.textContent = '';
+    clearInterval(dTimer);
+    dTimer = setInterval(function(){
+      dialogText.textContent += text[dCharIndex];
+      dCharIndex++;
+      if (dCharIndex >= text.length){
+        clearInterval(dTimer);
+        dTyping = false;
+        dialogArrow.classList.add('show');
+      }
+    }, 38);
+  }
+
+  dialogBox.addEventListener('click', function(){
+    if (dTyping){
+      clearInterval(dTimer);
+      dialogText.textContent = LINES[dLineIndex];
+      dTyping = false;
+      dialogArrow.classList.add('show');
+    } else {
+      dLineIndex++;
+      typeDialogueLine();
+    }
+  });
+
+  function showQuestion(){
+    document.getElementById('question').classList.add('show');
+    setTimeout(function(){
+      document.getElementById('btnArea').classList.add('show');
+    }, 500);
+  }
+
+  /* ---------------------------------------------------
+     5. THE NO BUTTON THAT RUNS AWAY
+  --------------------------------------------------- */
+  var noBtn = document.getElementById('noBtn');
+  var btnArea = document.getElementById('btnArea');
+  var noDodgeCount = 0;
+  var NO_MAX_DODGES = 3;
+
+  function dodge(){
+    var areaRect = btnArea.getBoundingClientRect();
+    var btnRect = noBtn.getBoundingClientRect();
+
+    if (!noBtn.classList.contains('dodging')){
+      // freeze current on-screen position before switching to absolute, so it doesn't jump
+      noBtn.style.left = (btnRect.left - areaRect.left) + 'px';
+      noBtn.style.top = (btnRect.top - areaRect.top) + 'px';
+      noBtn.classList.add('dodging');
+      void noBtn.offsetWidth; // force reflow so the position above takes effect first
+    }
+
+    var maxLeft = Math.max(0, areaRect.width - btnRect.width);
+    var maxTop = Math.max(0, areaRect.height - btnRect.height);
+    noBtn.style.left = (Math.random() * maxLeft) + 'px';
+    noBtn.style.top = (Math.random() * maxTop) + 'px';
+  }
+
+  function surrenderNoBtn(){
+    noBtn.classList.add('surrendered');
+    noBtn.classList.remove('dodging');
+    noBtn.style.left = '';
+    noBtn.style.top = '';
+    noBtn.textContent = 'JA';
+  }
+
+  function attemptEvade(){
+    if (noBtn.classList.contains('surrendered')) return;
+    noDodgeCount++;
+    if (noDodgeCount > NO_MAX_DODGES){
+      surrenderNoBtn();
+    } else {
+      dodge();
+    }
+  }
+
+  noBtn.addEventListener('mouseenter', attemptEvade);
+  noBtn.addEventListener('click', function(e){
+    e.preventDefault();
+    if (noBtn.classList.contains('surrendered')){
+      document.getElementById('yesBtn').click();
+    } else {
+      attemptEvade();
+    }
+  });
+  noBtn.addEventListener('touchstart', function(e){
+    e.preventDefault();
+    if (noBtn.classList.contains('surrendered')){
+      document.getElementById('yesBtn').click();
+    } else {
+      attemptEvade();
+    }
+  }, {passive:false});
+
+  /* ---------------------------------------------------
+     6. YES -> CELEBRATION
+  --------------------------------------------------- */
+  document.getElementById('yesBtn').addEventListener('click', function(){
+    var cel = document.getElementById('celebration');
+    cel.classList.add('show');
+
+    var lilyHolder = document.getElementById('celebrationLilies');
+    lilyHolder.innerHTML = '';
+    for (var i=0;i<3;i++){ lilyHolder.appendChild(makeLily(72)); }
+
+    spawnConfetti();
+  });
+
+  function spawnConfetti(){
+    var cel = document.getElementById('celebration');
+    var count = 0;
+    var timer = setInterval(function(){
+      var piece = document.createElement('div');
+      piece.className = 'confetti-heart';
+      piece.style.left = (Math.random()*100) + 'vw';
+      piece.style.animationDuration = (2.4 + Math.random()*2.2) + 's';
+      var size = 3 + Math.random()*4;
+      piece.appendChild(makeHeart(size));
+      cel.appendChild(piece);
+      setTimeout(function(p){ return function(){ p.remove(); }; }(piece), 5000);
+      count++;
+      if (count > 120){ clearInterval(timer); }
+    }, 120);
+  }
+
+})();
+</script>
+</body>
+</html>
